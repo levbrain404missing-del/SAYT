@@ -1,0 +1,42 @@
+# ВРЕМЕННЫЙ демо-стенд регистрации/входа (Node, без зависимостей).
+# Создан по запросу пользователя как одноразовый сайт-затычка.
+# Полное удаление:
+#   sudo systemctl disable --now stub-auth.service
+#   sudo rm -f /etc/systemd/system/stub-auth.service && sudo systemctl daemon-reload
+#   sudo rm -rf /opt/stub-auth /var/lib/stub-auth
+#   удалить блок сайта из /etc/caddy/Caddyfile + reload caddy
+#   sudo userdel stubauth
+[Unit]
+Description=stub-auth (временный демо-сайт регистрации)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=stubauth
+Group=stubauth
+WorkingDirectory=/opt/stub-auth
+EnvironmentFile=/opt/stub-auth/.env
+ExecStart=/usr/local/bin/node /opt/stub-auth/server.mjs
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Ограничения: пишет только в свой каталог данных.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/stub-auth
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryMax=300M
+
+[Install]
+WantedBy=multi-user.target

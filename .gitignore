@@ -1,0 +1,16 @@
+# Секреты и локальная конфигурация — никогда не коммитим
+.env
+.env.local
+*.pem
+*.key
+
+# Данные приложения
+*.db
+*.db-shm
+*.db-wal
+*.log
+data/
+
+# Прочее
+node_modules/
+.DS_Store
